@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>국민AI서비스혁신추진단 설계안 · 종이 리포트</title>
+  <style>
+    :root { --paper:#f6f1e7; --white:#fffdf8; --ink:#141210; --red:#c43a1d; --muted:#8a8276; --rule:#1a1815; }
+    * { box-sizing:border-box; }
+    html,body { margin:0; width:100%; height:100%; overflow:hidden; background:#27231f; }
+    body { font-family:Inter,system-ui,"Apple SD Gothic Neo","Malgun Gothic",sans-serif; color:var(--ink); }
+    #viewport { position:fixed; inset:0; display:grid; place-items:center; }
+    #deck { position:relative; width:1920px; height:1080px; transform-origin:center; background:var(--paper); overflow:hidden; }
+    .slide { position:absolute; inset:0; width:1920px; height:1080px; visibility:hidden; opacity:0; background:var(--paper); padding:104px 140px 122px; overflow:hidden; }
+    .slide.active { visibility:visible; opacity:1; }
+    h1,h2,h3,p { margin:0; word-break:keep-all; overflow-wrap:anywhere; }
+    h1,h2,.serif { font-family:"Noto Serif KR","AppleMyungjo","Batang","Times New Roman",serif; }
+    h1 { font-size:144px; line-height:1.04; letter-spacing:-.04em; font-weight:800; }
+    h2 { font-size:68px; line-height:1.13; letter-spacing:-.03em; font-weight:800; }
+    h3 { font-size:31px; line-height:1.28; font-weight:750; }
+    p { font-size:28px; line-height:1.52; }
+    .eyebrow { font-size:20px; font-weight:700; letter-spacing:.24em; text-transform:uppercase; color:var(--red); }
+    .headline-rule { height:1px; background:var(--rule); margin:48px 0 40px; }
+    .footer { position:absolute; left:140px; right:140px; bottom:62px; display:flex; justify-content:space-between; align-items:baseline; border-top:1px dashed var(--rule); padding-top:18px; color:var(--muted); font-size:18px; font-weight:650; letter-spacing:.16em; text-transform:uppercase; }
+    .kicker { display:inline-block; border-top:6px solid var(--red); padding-top:14px; font-size:25px; font-weight:800; }
+    .box { background:var(--white); border:1px solid var(--rule); border-radius:1px; }
+    .red { color:var(--red); }
+    .muted { color:var(--muted); }
+    .big-num { font-family:"Times New Roman",serif; font-size:112px; line-height:.85; font-weight:700; color:var(--red); }
+    .stamp { display:inline-flex; align-items:center; justify-content:center; border:3px solid var(--red); color:var(--red); padding:10px 16px; font-size:18px; font-weight:900; letter-spacing:.08em; transform:rotate(-2deg); }
+
+    /* cover */
+    .cover { display:grid; grid-template-columns:1.24fr .76fr; gap:72px; align-items:center; }
+    .cover h1 { font-size:134px; }
+    .cover .summary { margin-top:44px; max-width:950px; font-size:31px; }
+    .cover .issue { height:690px; border-left:1px solid var(--rule); padding-left:64px; display:flex; flex-direction:column; justify-content:space-between; }
+    .cover .issue-no { font-family:"Times New Roman",serif; font-size:220px; line-height:.8; color:var(--red); }
+    .cover .index { display:grid; gap:18px; font-size:24px; }
+    .cover .index div { display:flex; justify-content:space-between; border-bottom:1px dotted var(--muted); padding-bottom:12px; }
+
+    /* issue cards */
+    .three { display:grid; grid-template-columns:repeat(3,1fr); gap:34px; }
+    .issue-card { min-height:390px; padding:36px; position:relative; }
+    .issue-card .n { font-family:"Times New Roman",serif; font-size:92px; color:var(--red); line-height:.85; }
+    .issue-card h3 { margin-top:58px; font-size:36px; }
+    .issue-card p { margin-top:20px; color:#4d4943; font-size:25px; }
+    .bottom-note { margin-top:32px; padding:22px 26px; border-left:7px solid var(--red); font-size:27px; font-weight:800; background:var(--white); }
+
+    /* principle */
+    .equation-grid { display:grid; grid-template-columns:1fr 90px 1fr 90px 1fr; align-items:center; margin-top:70px; }
+    .equation-card { height:400px; padding:42px; display:flex; flex-direction:column; justify-content:space-between; }
+    .equation-card .mark { font-family:"Times New Roman",serif; font-size:82px; color:var(--red); }
+    .equation-card p { font-size:25px; color:#4d4943; }
+    .operator { font-family:"Times New Roman",serif; font-size:74px; text-align:center; }
+
+    /* talent */
+    .talent-grid { display:grid; grid-template-columns:1.05fr .95fr; gap:44px; margin-top:46px; height:600px; }
+    .domains { padding:38px; display:grid; grid-template-columns:repeat(3,1fr); gap:18px; align-content:center; }
+    .domain { border-top:3px solid var(--red); padding:22px 10px; text-align:center; font-size:27px; font-weight:800; }
+    .domain.core { grid-column:1/-1; font-family:"Noto Serif KR","Batang",serif; font-size:42px; border:1px solid var(--rule); background:var(--white); }
+    .benefits { display:grid; grid-template-rows:1fr 1fr; gap:24px; }
+    .benefit { padding:36px; }
+    .benefit h3 { margin-top:18px; font-size:39px; }
+    .benefit p { margin-top:18px; font-size:25px; color:#4d4943; }
+
+    /* cell */
+    .cell-grid { display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--rule); margin-top:54px; height:520px; background:var(--white); }
+    .cell-col { padding:46px; }
+    .cell-col + .cell-col { border-left:1px solid var(--rule); }
+    .cell-col .role-no { font-family:"Times New Roman",serif; color:var(--red); font-size:74px; line-height:1; }
+    .cell-col h3 { font-size:42px; margin-top:24px; }
+    .cell-col ul { margin:30px 0 0; padding:0; list-style:none; font-size:27px; line-height:1.8; }
+    .cell-col li { border-bottom:1px dotted var(--muted); }
+    .agent-strip { margin-top:22px; display:flex; align-items:center; justify-content:space-between; padding:18px 24px; border:1px solid var(--rule); font-size:23px; }
+    .agent-strip span { color:var(--red); font-weight:800; }
+
+    /* portfolio */
+    .portfolio { display:grid; grid-template-columns:1fr 320px 1fr; gap:34px; margin-top:56px; align-items:stretch; height:540px; }
+    .source { padding:38px; display:flex; flex-direction:column; }
+    .source h3 { margin-top:24px; font-size:39px; }
+    .source p { margin-top:18px; font-size:24px; color:#4d4943; }
+    .source .ticks { margin-top:auto; display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+    .source .ticks i { height:50px; border:1px solid var(--rule); background:var(--paper); }
+    .funnel { border-left:1px solid var(--rule); border-right:1px solid var(--rule); display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .funnel .total { font-family:"Times New Roman",serif; font-size:108px; line-height:.9; color:var(--red); }
+    .funnel small { font-size:19px; letter-spacing:.12em; color:var(--muted); }
+    .gate { width:230px; text-align:center; padding:12px; margin-top:10px; border-top:1px solid var(--rule); font-size:20px; font-weight:750; }
+
+    /* field notes */
+    .field-layout { display:grid; grid-template-columns:520px 1fr; gap:70px; margin-top:48px; height:570px; }
+    .field-quote { padding:40px; display:flex; flex-direction:column; justify-content:space-between; }
+    .field-quote blockquote { margin:0; font-family:"Noto Serif KR","Batang",serif; font-size:48px; line-height:1.42; }
+    .field-quote small { font-size:20px; letter-spacing:.12em; color:var(--muted); }
+    .notes { border-top:1px solid var(--rule); }
+    .note-row { min-height:126px; display:grid; grid-template-columns:70px 1fr; align-items:center; border-bottom:1px solid var(--rule); }
+    .note-row b { font-family:"Times New Roman",serif; font-size:48px; color:var(--red); }
+    .note-row span { font-size:29px; font-weight:720; }
+
+    /* data */
+    .data-equation { margin-top:62px; display:grid; grid-template-columns:1fr 90px 1fr 90px 1fr; align-items:center; }
+    .data-term { min-height:220px; display:grid; place-items:center; padding:30px; text-align:center; border-top:5px solid var(--red); background:var(--white); font-family:"Noto Serif KR","Batang",serif; font-size:39px; font-weight:800; }
+    .data-op { text-align:center; font-family:"Times New Roman",serif; font-size:64px; }
+    .conditions { display:grid; grid-template-columns:repeat(3,1fr); gap:26px; margin-top:52px; }
+    .condition { padding:27px 30px; border-left:1px solid var(--rule); }
+    .condition b { display:block; color:var(--red); font-size:18px; letter-spacing:.16em; }
+    .condition span { display:block; margin-top:14px; font-size:24px; line-height:1.45; }
+
+    /* criteria table */
+    .criteria { width:100%; border-collapse:collapse; margin-top:48px; font-size:24px; background:var(--white); }
+    .criteria th,.criteria td { border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); padding:20px 24px; text-align:left; vertical-align:top; }
+    .criteria th { width:70px; color:var(--red); font-family:"Times New Roman",serif; font-size:34px; }
+    .criteria td:nth-child(2) { width:300px; font-weight:800; font-size:28px; }
+    .criteria td:nth-child(3) { color:#4d4943; }
+
+    /* build */
+    .build-line { display:grid; grid-template-columns:repeat(4,1fr); margin-top:64px; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); background:var(--white); }
+    .build-step { min-height:220px; padding:34px; position:relative; }
+    .build-step + .build-step { border-left:1px solid var(--rule); }
+    .build-step b { font-family:"Times New Roman",serif; font-size:54px; color:var(--red); }
+    .build-step h3 { margin-top:22px; }
+    .guards { display:grid; grid-template-columns:repeat(3,1fr); gap:26px; margin-top:42px; }
+    .guard { padding:26px 30px; border-left:6px solid var(--red); background:var(--white); }
+    .guard b { font-size:19px; color:var(--red); letter-spacing:.08em; }
+    .guard p { margin-top:10px; font-size:23px; }
+
+    /* lifecycle */
+    .life-table { display:grid; grid-template-columns:repeat(6,1fr); margin-top:70px; border:1px solid var(--rule); background:var(--white); }
+    .life { min-height:390px; padding:28px 24px; display:flex; flex-direction:column; }
+    .life + .life { border-left:1px solid var(--rule); }
+    .life .no { font-family:"Times New Roman",serif; color:var(--red); font-size:66px; line-height:1; }
+    .life h3 { margin-top:46px; font-size:29px; }
+    .life p { margin-top:auto; padding-top:24px; border-top:1px dotted var(--muted); font-size:20px; color:#4d4943; }
+
+    /* close */
+    .close-grid { display:grid; grid-template-columns:1.05fr .95fr; gap:74px; align-items:start; margin-top:44px; }
+    .close h2 { font-family:"Noto Serif KR","Batang",serif; font-size:104px; line-height:1.12; }
+    .close .formula { margin-top:42px; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); padding:28px 0; font-size:28px; font-weight:800; }
+    .roadmap { border-top:5px solid var(--red); }
+    .road { display:grid; grid-template-columns:140px 1fr; gap:22px; padding:28px 0; border-bottom:1px solid var(--rule); }
+    .road b { color:var(--red); font-size:20px; letter-spacing:.08em; }
+    .road h3 { font-size:31px; }
+    .road p { margin-top:8px; font-size:22px; color:#4d4943; }
+
+    #controls { position:fixed; z-index:10; left:50%; bottom:18px; transform:translateX(-50%); display:flex; align-items:center; gap:8px; padding:7px 10px; background:rgba(20,18,16,.82); color:white; }
+    #controls button { width:34px; height:32px; border:1px solid rgba(255,255,255,.45); background:transparent; color:white; cursor:pointer; }
+    #counter { min-width:72px; text-align:center; font-size:13px; }
+    @media print {
+      html,body { overflow:visible; background:white; }
+      #viewport { position:static; display:block; }
+      #deck { width:1920px; height:auto; transform:none!important; overflow:visible; }
+      .slide { position:relative; visibility:visible!important; opacity:1!important; break-after:page; page-break-after:always; }
+      #controls { display:none; }
+      @page { size:20in 11.25in; margin:0; }
+    }
+  </style>
+</head>
+<body>
+  <div id="viewport"><main id="deck">
+
+    <section class="slide cover active" data-title="표지">
+      <div>
+        <div class="eyebrow">National AI Service Innovation · Design Report</div>
+        <h1 style="margin-top:34px">국민의 불편에서<br><span class="red">작동하는 서비스</span>까지</h1>
+        <p class="summary">현장 챔피언, 기관 데이터, 민간 개발자를 하나의 실행체계로 연결하는 국민AI서비스혁신추진단 설계안</p>
+      </div>
+      <aside class="issue">
+        <div><div class="stamp">WORKING PAPER</div><div class="issue-no">01</div></div>
+        <div class="index"><div><span>사람</span><b>CHAMPION</b></div><div><span>데이터</span><b>DATA</b></div><div><span>실행</span><b>DELIVERY</b></div><div><span>확산</span><b>SCALE</b></div></div>
+      </aside>
+      <div class="footer"><span>Paper Press · 설계 개요</span><span>p. 01 of 12</span></div>
+    </section>
+
+    <section class="slide" data-title="문제 정의">
+      <div class="eyebrow">01 · Why change</div><h2 style="margin-top:22px">과제가 없어서가 아니라,<br>좋은 문제를 찾는 구조가 부족하다</h2><div class="headline-rule"></div>
+      <div class="three">
+        <article class="box issue-card"><div class="n">01</div><h3>기관 비협조</h3><p>인센티브가 없으면 문제와 데이터가 추진단까지 오지 않는다.</p></article>
+        <article class="box issue-card"><div class="n">02</div><h3>지원자 니즈 부족</h3><p>챔피언 개인에게도 성장과 성과가 보이는 동기가 필요하다.</p></article>
+        <article class="box issue-card"><div class="n">03</div><h3>개발의 분절</h3><p>기획·구현·보안이 순차로 끊기면 생활밀착형 서비스가 느려진다.</p></article>
+      </div>
+      <div class="bottom-note">기관이 낸 과제만 기다리지 않고, 현장의 반복 불편을 먼저 발견한다.</div>
+      <div class="footer"><span>Paper Press · 문제 정의</span><span>p. 02 of 12</span></div>
+    </section>
+
+    <section class="slide" data-title="설계 원칙">
+      <div class="eyebrow">02 · Design principle</div><h2 style="margin-top:22px">사람과 데이터가 함께 들어오고,<br>작은 팀이 끝까지 책임진다</h2><div class="headline-rule"></div>
+      <div class="equation-grid">
+        <article class="box equation-card"><div class="mark">C</div><div><h3>기관 챔피언</h3><p>도메인 지식과 현장 문제를 정의하고 MVP를 함께 기획한다.</p></div></article>
+        <div class="operator">+</div>
+        <article class="box equation-card"><div class="mark">D</div><div><h3>기관 데이터</h3><p>챔피언과 동시에 제공되어 실증 가능성을 바로 확인한다.</p></div></article>
+        <div class="operator">+</div>
+        <article class="box equation-card"><div class="mark">M</div><div><h3>민간 개발자</h3><p>프로그램 고도화와 보안을 맡아 서비스 수준으로 끌어올린다.</p></div></article>
+      </div>
+      <div class="footer"><span>Paper Press · 설계 원칙</span><span>p. 03 of 12</span></div>
+    </section>
+
+    <section class="slide" data-title="인재 영입">
+      <div class="eyebrow">03 · Talent</div><h2 style="margin-top:22px">다양한 도메인의 AI 챔피언을 모은다</h2><div class="headline-rule"></div>
+      <div class="talent-grid">
+        <div class="box domains"><div class="domain core">AI 챔피언 풀</div><div class="domain">복지</div><div class="domain">교통</div><div class="domain">교육</div><div class="domain">보건</div><div class="domain">안전</div><div class="domain">행정</div></div>
+        <div class="benefits"><article class="box benefit"><div class="eyebrow">기관 인센티브</div><h3>기관문제를 우선 해결</h3><p>챔피언과 데이터가 함께 참여하면 기관의 실질 과제를 빠르게 실증한다.</p></article><article class="box benefit"><div class="eyebrow">챔피언 인센티브</div><h3>성과가 남는 참여</h3><p>문제 정의부터 MVP까지 주도하고 확산 가능한 서비스 성과를 만든다.</p></article></div>
+      </div>
+      <div class="footer"><span>Paper Press · 인재 영입</span><span>p. 04 of 12</span></div>
+    </section>
+
+    <section class="slide" data-title="2인 실행 셀">
+      <div class="eyebrow">04 · Delivery cell</div><h2 style="margin-top:22px">2인 실행 셀, 작게 시작해 끝까지</h2><div class="headline-rule"></div>
+      <div class="cell-grid">
+        <article class="cell-col"><div class="role-no">01</div><h3>AI 챔피언 · 기획 + MVP</h3><ul><li>문제 정의</li><li>현장 맥락</li><li>데이터 해석</li><li>사용자 검증</li></ul></article>
+        <article class="cell-col"><div class="role-no">02</div><h3>민간 개발자 · 고도화 + 보안</h3><ul><li>제품화</li><li>성능 개선</li><li>보안 설계</li><li>운영 이관</li></ul></article>
+      </div>
+      <div class="agent-strip"><b>AI 에이전트 지원</b><span>조사 · 코딩 · 테스트 · 문서화</span></div>
+      <div class="footer"><span>Paper Press · 실행 구조</span><span>p. 05 of 12</span></div>
+    </section>
+
+    <section class="slide" data-title="과제 포트폴리오">
+      <div class="eyebrow">05 · Portfolio</div><h2 style="margin-top:22px">두 개의 입구, 하나의 과제 포트폴리오</h2><div class="headline-rule"></div>
+      <div class="portfolio">
+        <article class="box source"><div class="big-num">40</div><h3>대형 제출과제 · 수동형</h3><p>기관이 제출한 과제에서 실행 가능성이 높은 문제를 선별한다.</p><div class="ticks"><i></i><i></i><i></i><i></i><i></i></div></article>
+        <div class="funnel"><div class="total">90</div><small>후보 과제</small><div class="gate">문제 검증</div><div class="gate">데이터 확인</div><div class="gate">MVP 후보</div></div>
+        <article class="box source"><div class="big-num">50</div><h3>생활밀착형 과제 · 능동형</h3><p>도메인별 현장 인터뷰와 반복 업무에서 직접 발굴한다.</p><div class="ticks"><i></i><i></i><i></i><i></i><i></i></div></article>
+      </div>
+      <div class="footer"><span>Paper Press · 과제 포트폴리오</span><span>p. 06 of 12</span></div>
+    </section>
+
+    <section class="slide" data-title="현장 발굴">
+      <div class="eyebrow">06 · Field discovery</div><h2 style="margin-top:22px">불편을 듣고, 반복을 찾아, 문제로 정의한다</h2><div class="headline-rule"></div>
+      <div class="field-layout">
+        <aside class="box field-quote"><blockquote>“생활의 불편이<br>프로그램으로 바뀔 때<br>비로소 해결이 시작된다.”</blockquote><small>FIELD NOTE · 국민 관점의 문제 정의</small></aside>
+        <div class="notes"><div class="note-row"><b>01</b><span>현장 인터뷰 전사본 녹음</span></div><div class="note-row"><b>02</b><span>문제점 정리와 반복 패턴 추출</span></div><div class="note-row"><b>03</b><span>여러 도메인의 공통 이슈 타깃</span></div><div class="note-row"><b>04</b><span>그동안 겪었던 업무에서 후보 찾기</span></div></div>
+      </div>
+      <div class="footer"><span>Paper Press · 생활밀착형 과제</span><span>p. 07 of 12</span></div>
+    </section>
+
+    <section class="slide" data-title="기관 챔피언과 데이터">
+      <div class="eyebrow">07 · Champion + Data</div><h2 style="margin-top:22px">기관은 사람과 데이터를 함께 보낸다</h2><div class="headline-rule"></div>
+      <div class="data-equation"><div class="data-term">기관 챔피언</div><div class="data-op">+</div><div class="data-term">활용 가능한 데이터</div><div class="data-op">=</div><div class="data-term">실증 가능한 과제</div></div>
+      <div class="conditions"><div class="condition"><b>CONTEXT</b><span>데이터의 의미와 업무 맥락을 챔피언이 설명한다.</span></div><div class="condition"><b>READINESS</b><span>접근권한·품질·활용 범위를 시작 전에 확인한다.</span></div><div class="condition"><b>SAFE USE</b><span>민감정보와 반출 기준을 지키며 실증 환경을 설계한다.</span></div></div>
+      <div class="footer"><span>Paper Press · 기관 참여의 최소 단위</span><span>p. 08 of 12</span></div>
+    </section>
+
+    <section class="slide" data-title="과제 선정 기준">
+      <div class="eyebrow">08 · Selection gate</div><h2 style="margin-top:22px">좋은 아이디어보다, 검증 가능한 문제를 고른다</h2><div class="headline-rule"></div>
+      <table class="criteria"><tbody>
+        <tr><th>01</th><td>국민 불편도</td><td>실제 이용자의 시간과 노력을 얼마나 줄이는가</td></tr>
+        <tr><th>02</th><td>반복 빈도</td><td>여러 기관과 현장에서 반복되는 문제인가</td></tr>
+        <tr><th>03</th><td>데이터 준비도</td><td>챔피언이 설명할 수 있는 데이터가 함께 오는가</td></tr>
+        <tr><th>04</th><td>AI 적합성</td><td>AI가 규칙 기반 자동화보다 실질 우위를 만드는가</td></tr>
+        <tr><th>05</th><td>MVP 가능성</td><td>짧은 주기 안에 작동하는 결과물을 만들 수 있는가</td></tr>
+        <tr><th>06</th><td>확산성과 위험</td><td>다른 기관으로 확산 가능하며 위험을 통제할 수 있는가</td></tr>
+      </tbody></table>
+      <div class="footer"><span>Paper Press · 제안 선정 기준</span><span>p. 09 of 12</span></div>
+    </section>
+
+    <section class="slide" data-title="개발 환경">
+      <div class="eyebrow">09 · Build environment</div><h2 style="margin-top:22px">빠르게 만들되, 보안은 단계마다 통과한다</h2><div class="headline-rule"></div>
+      <div class="build-line"><div class="build-step"><b>01</b><h3>문제 정의</h3></div><div class="build-step"><b>02</b><h3>에이전트 개발</h3></div><div class="build-step"><b>03</b><h3>사용자 테스트</h3></div><div class="build-step"><b>04</b><h3>보안 검토</h3></div></div>
+      <div class="guards"><div class="guard"><b>선개발</b><p>민감정보 없는 격리 환경에서 가설을 검증한다.</p></div><div class="guard"><b>민간 AI 활용</b><p>승인 도구와 데이터 등급 기준을 적용한다.</p></div><div class="guard"><b>단계별 보안</b><p>테스트·확산 전 로그·권한·개인정보를 점검한다.</p></div></div>
+      <div class="footer"><span>Paper Press · 개발 환경</span><span>p. 10 of 12</span></div>
+    </section>
+
+    <section class="slide" data-title="운영 모델">
+      <div class="eyebrow">10 · Operating model</div><h2 style="margin-top:22px">발굴에서 이관까지, 하나의 생명주기로 운영한다</h2><div class="headline-rule"></div>
+      <div class="life-table"><div class="life"><div class="no">01</div><h3>인재영입</h3><p>도메인 챔피언</p></div><div class="life"><div class="no">02</div><h3>과제발굴</h3><p>수동형 + 능동형</p></div><div class="life"><div class="no">03</div><h3>선정</h3><p>문제·데이터 검증</p></div><div class="life"><div class="no">04</div><h3>개발</h3><p>2인 셀 + 에이전트</p></div><div class="life"><div class="no">05</div><h3>검증</h3><p>사용자·보안</p></div><div class="life"><div class="no">06</div><h3>확산·이관</h3><p>운영 주체 확정</p></div></div>
+      <div class="footer"><span>Paper Press · 통합 운영 모델</span><span>p. 11 of 12</span></div>
+    </section>
+
+    <section class="slide close" data-title="90일 실행안">
+      <div class="eyebrow">11 · First 90 days</div><div class="close-grid">
+        <div><h2>작게 만들고,<br><span class="red">국민이 쓰면</span><br>확산한다</h2><div class="formula">기관 챔피언 + 데이터 + 민간 개발자 = 작동하는 국민 AI 서비스</div></div>
+        <div class="roadmap"><div class="road"><b>DAY 0—30</b><div><h3>사람과 데이터 확보</h3><p>챔피언을 영입하고 기관별 데이터 준비도를 점검한다.</p></div></div><div class="road"><b>DAY 31—60</b><div><h3>90개 후보 검증</h3><p>제출과제와 현장 과제를 하나의 기준으로 평가한다.</p></div></div><div class="road"><b>DAY 61—90</b><div><h3>MVP 실행 셀 가동</h3><p>실증 환경에서 빠르게 만들고 사용자와 검증한다.</p></div></div></div>
+      </div>
+      <div class="footer"><span>Paper Press · 실행체계 확정</span><span>p. 12 of 12</span></div>
+    </section>
+
+  </main></div>
+  <div id="controls"><button id="prev">←</button><span id="counter">01 / 12</span><button id="next">→</button><button id="full">⛶</button></div>
+  <script>
+    const deck=document.getElementById('deck'),slides=[...document.querySelectorAll('.slide')],counter=document.getElementById('counter');
+    let index=Math.max(0,Math.min(slides.length-1,Number(location.hash.slice(1))-1||0));
+    function fit(){deck.style.transform=`scale(${Math.min(innerWidth/1920,innerHeight/1080)})`}
+    function show(n){index=(n+slides.length)%slides.length;slides.forEach((s,i)=>s.classList.toggle('active',i===index));counter.textContent=`${String(index+1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')}`;history.replaceState(null,'',`#${index+1}`);document.title=`${slides[index].dataset.title} · 국민AI서비스혁신추진단`}
+    function full(){document.fullscreenElement?document.exitFullscreen?.():document.documentElement.requestFullscreen?.()}
+    addEventListener('resize',fit);addEventListener('hashchange',()=>show(Number(location.hash.slice(1))-1||0));addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(index+1)}if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(index-1)}if(e.key==='Home')show(0);if(e.key==='End')show(slides.length-1);if(e.key.toLowerCase()==='f')full()});
+    prev.onclick=()=>show(index-1);next.onclick=()=>show(index+1);document.getElementById('full').onclick=full;fit();show(index);
+  </script>
+</body>
+</html>
